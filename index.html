@@ -1,0 +1,363 @@
+# ty768-cmd.github.io
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Blog</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #202020;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navigation Bar */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem 4rem;
+            border-bottom: 1px solid #333;
+        }
+
+        .logo {
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-decoration: none;
+            color: #ffffff;
+            cursor: pointer;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #888888;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: #ffffff;
+        }
+
+        .menu-icon {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .menu-icon span {
+            width: 24px;
+            height: 2px;
+            background-color: #ffffff;
+            display: block;
+        }
+
+        /* Main Container */
+        main {
+            padding: 3rem 4rem;
+            flex: 1;
+        }
+
+        /* Section Controller */
+        .page-section {
+            display: none; /* ซ่อนทุกหน้าไว้ก่อน */
+        }
+
+        .page-section.active {
+            display: block; /* แสดงเฉพาะหน้าที่เลือก */
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Home Page Styles */
+        .title-container {
+            display: inline-block;
+            margin-top: 1rem;
+        }
+
+        .title-container h1 {
+            font-size: 8rem;
+            font-weight: 800;
+            line-height: 1.05;
+            letter-spacing: -2px;
+        }
+
+        .divider {
+            width: 100%;
+            height: 2px;
+            background-color: #ffffff;
+            margin: 0.5rem 0 1rem 0;
+            opacity: 0.8;
+        }
+
+        /* Blog Page Styles */
+        .blog-header {
+            margin-bottom: 3rem;
+        }
+
+        .blog-header h2 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .blog-card {
+            background-color: #2a2a2a;
+            border-radius: 8px;
+            padding: 1.5rem;
+            border: 1px solid #3a3a3a;
+        }
+
+        .blog-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .blog-date {
+            color: #888;
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+        }
+
+        .blog-card p {
+            color: #ccc;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Media Elements inside Blog */
+        .media-container {
+            margin: 1rem 0;
+            border-radius: 6px;
+            overflow: hidden;
+            background-color: #000;
+        }
+
+        .media-container video, 
+        .media-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Download File Box */
+        .file-attachment {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #1a1a1a;
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            border: 1px dashed #555;
+            margin-top: 1rem;
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: #ddd;
+        }
+
+        .btn-download {
+            background-color: #ffffff;
+            color: #000000;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .btn-download:hover {
+            background-color: #ccc;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav, main {
+                padding: 1.5rem 2rem;
+            }
+
+            .nav-links {
+                gap: 1.2rem;
+            }
+
+            .title-container h1 {
+                font-size: 4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header / Navigation -->
+    <nav>
+        <!-- ปุ่ม Home (โลโก้ซ้ายมือ) -->
+        <a class="logo" onclick="switchTab('home')">Home</a>
+        
+        <ul class="nav-links">
+            <li><a id="nav-blog" onclick="switchTab('blog')">Blog</a></li>
+            <li><a id="nav-project" onclick="switchTab('project')">Project</a></li>
+            <li><a id="nav-work" onclick="switchTab('work')">Work</a></li>
+            <li><a id="nav-contact" onclick="switchTab('contact')">Get in Touch</a></li>
+            <li>
+                <div class="menu-icon">
+                    <span></span>
+                    <span></span>
+                </div>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        
+        <!-- หน้าที่ 1: HOME (หน้าหลักสไตล์รูปภาพ) -->
+        <section id="home-section" class="page-section active">
+            <div class="title-container">
+                <h1>Personal</h1>
+                <div class="divider"></div>
+                <h1>blog</h1>
+            </div>
+        </section>
+
+        <!-- หน้าที่ 2: BLOG (หน้ารวมโพสต์ + แทรกไฟล์/วิดีโอ) -->
+        <section id="blog-section" class="page-section">
+            <div class="blog-header">
+                <h2>Latest Posts</h2>
+                <p style="color: #888;">เรื่องราว วิดีโอ และไฟล์ดาวน์โหลดล่าสุด</p>
+            </div>
+
+            <div class="blog-grid">
+
+                <!-- ตัวอย่างบล็อกโพสต์ที่ 1: แทรกวิดีโอ (Video) -->
+                <article class="blog-card">
+                    <h3>🎬 ตัวอย่างวิดีโอสาธิตระบบ</h3>
+                    <div class="blog-date">โพสต์เมื่อ: 14 สิงหาคม 2026</div>
+                    <p>นี่คือตัวอย่างการฝังไฟล์วิดีโอลงในบล็อก สามารถเปิดเล่น (Play / Pause) ได้ทันทีในหน้าเว็บ</p>
+                    
+                    <div class="media-container">
+                        <!-- ใส่ Link ไฟล์วิดีโอของคุณที่ src -->
+                        <video controls poster="https://via.placeholder.com/600x340/111111/ffffff?text=Video+Cover">
+                            <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+                            เบราว์เซอร์ของคุณไม่รองรับการเล่นวิดีโอ
+                        </video>
+                    </div>
+                </article>
+
+                <!-- ตัวอย่างบล็อกโพสต์ที่ 2: แนบไฟล์ดาวน์โหลด (File Download) -->
+                <article class="blog-card">
+                    <h3>📁 โครงงานและเอกสารดาวน์โหลด</h3>
+                    <div class="blog-date">โพสต์เมื่อ: 10 สิงหาคม 2026</div>
+                    <p>ดาวน์โหลดเอกสารประกอบการนำเสนอโครงงานและไฟล์ซอร์สโค้ดได้จากลิงก์แนบด้านล่างนี้</p>
+                    
+                    <!-- กล่องแนบไฟล์ดาวน์โหลด -->
+                    <div class="file-attachment">
+                        <div class="file-info">
+                            📄 <span>Project_Presentation.pdf</span>
+                        </div>
+                        <!-- ใส่ Link ไฟล์ที่จะให้ดาวน์โหลดใน href -->
+                        <a href="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" download class="btn-download">Download</a>
+                    </div>
+
+                    <div class="file-attachment">
+                        <div class="file-info">
+                            📦 <span>SourceCode_v1.0.zip</span>
+                        </div>
+                        <a href="#" download class="btn-download">Download</a>
+                    </div>
+                </article>
+
+                <!-- ตัวอย่างบล็อกโพสต์ที่ 3: แทรกรูปภาพ (Image) -->
+                <article class="blog-card">
+                    <h3>🖼️ แกลเลอรีผลงานออกแบบ</h3>
+                    <div class="blog-date">โพสต์เมื่อ: 01 สิงหาคม 2026</div>
+                    <p>ตัวอย่างการโชว์รูปภาพผลงานภายในหน้าบล็อก</p>
+                    
+                    <div class="media-container">
+                        <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600" alt="Work Design">
+                    </div>
+                </article>
+
+            </div>
+        </section>
+
+        <!-- หน้าที่ 3: PROJECT (หน้าว่างตัวอย่าง) -->
+        <section id="project-section" class="page-section">
+            <h2>My Projects</h2>
+            <p style="margin-top: 1rem; color: #888;">พื้นที่สำหรับใส่ผลงาน/โปรเจกต์ของคุณ</p>
+        </section>
+
+        <!-- หน้าที่ 4: WORK (หน้าว่างตัวอย่าง) -->
+        <section id="work-section" class="page-section">
+            <h2>Work Experience</h2>
+            <p style="margin-top: 1rem; color: #888;">พื้นที่สำหรับใส่ประสบการณ์การทำงาน</p>
+        </section>
+
+        <!-- หน้าที่ 5: CONTACT (หน้าว่างตัวอย่าง) -->
+        <section id="contact-section" class="page-section">
+            <h2>Get in Touch</h2>
+            <p style="margin-top: 1rem; color: #888;">อีเมล: yourname@example.com</p>
+        </section>
+
+    </main>
+
+    <!-- JavaScript สำหรับสลับหน้า -->
+    <script>
+        function switchTab(tabName) {
+            // 1. ซ่อนทุกหน้าก่อน
+            const sections = document.querySelectorAll('.page-section');
+            sections.forEach(section => section.classList.remove('active'));
+
+            // 2. ลบสถานะ active บน เมนูนำทาง
+            const navLinks = document.querySelectorAll('.nav-links a');
+            navLinks.forEach(link => link.classList.remove('active'));
+
+            // 3. แสดงเฉพาะหน้าที่สวิตช์ไปหา
+            const targetSection = document.getElementById(tabName + '-section');
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+
+            // 4. เปลี่ยนสีเมนูที่กำลังเปิดอยู่
+            const activeNav = document.getElementById('nav-' + tabName);
+            if (activeNav) {
+                activeNav.classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>
